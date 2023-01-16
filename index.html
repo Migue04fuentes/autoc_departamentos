@@ -1,26 +1,26 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <link rel="stylesheet" href="index.css" />
-    <title>Document</title>
-  </head>
-  <body>
-    <div class="container">
-      <div class="form">
-        <input
-          placeholder="Departamento"
-          autofocus
-        />
-        <ul
-          class="hidden"
-          role="listbox"
-          aria-label="Search for a country"
-        ></ul>
-      </div>
+
+<head>
+  <meta charset="UTF-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="stylesheet" href="index.css" />
+  <title>Document</title>
+</head>
+
+<body>
+  <div class="container">
+    <div class="form">
+      <input id="departamentos" placeholder="Departamento"/>
+      <ul id="listdepartamentos" class="hidden" role="listbox" aria-label="Search for a country"></ul>
+    </div>&nbsp;&nbsp;
+    <div class="form">
+      <input id="municipios" placeholder="Municipios" />
+      <ul class="hidden" role="listbox" aria-label="Search for a country"></ul>
     </div>
-    <script src="index.js"></script>
-  </body>
+  </div>
+  <script src="index.js"></script>
+</body>
+
 </html>

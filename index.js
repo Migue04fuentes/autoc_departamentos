@@ -12,18 +12,18 @@ var filteredResults = [];
 
 function init() {
   fetch(
-    "https://gist.githubusercontent.com/Migue04fuentes/4dac4f408823eb71c9f3863d8960272c/raw/8673f617d5a772216991128c3792c3e802ed7fb7/municipios.json"
+    "https://gist.githubusercontent.com/Migue04fuentes/0e9ec5b98468e55c64e814314a8dd5ba/raw/cb40e0681936f31a1a09f8a9fd6dc94fd1190281/Alldepartamentos"
   )
     .then((response) => response.json())
     .then((data) => (countries = data));
 
-  resultsElem = document.querySelector("ul");
-  inputElem = document.querySelector("input");
+  resultsElem = document.getElementById("listdepartamentos");
+  inputElem = document.getElementById("departamentos");
 
   //Al hacer click en alguno de los elementos de la lista
-  resultsElem.addEventListener("click", (event) => {
-    handleResultClick(event);
-  });
+  // resultsElem.addEventListener("click", (event) => {
+  //   handleResultClick(event);
+  // });
   //Ejecutar evento en el input
   inputElem.addEventListener("input", (event) => {
     autocomplete(event);
@@ -42,12 +42,12 @@ function autocomplete(event) {
     inputElem.value = "";
     return;
   }
-  
+
   filteredResults = countries.filter((country) => {
     return country.departamento.toLowerCase().startsWith(value.toLowerCase());
   });
-  
- 
+
+
   // resultsElem.innerHTML = result
   //   .map((result, index) => {
   //     const isSelected = index ===0;
@@ -67,11 +67,11 @@ function autocomplete(event) {
 }
 
 // Al seleccionar item de la lista
-function handleResultClick(event) {
+/* function handleResultClick(event) {
   if (event.target && event.target.nodeName === "LI") {
     selectItem(event.target);
   }
-}
+} */
 
 // Desplazamiento por la lista
 function handleResultKeyDown(event) {
@@ -86,6 +86,8 @@ function handleResultKeyDown(event) {
       case "ArrowRight":
         return;
       case "ArrowLeft":
+        return;
+      case "Backspace":
         return;
       case "Backspace":
         return;
@@ -110,7 +112,6 @@ function handleResultKeyDown(event) {
       case "Enter": {
         inputElem.value = document.activeElement.value;
         hideResults();
-        cargarmunicipios();
         break;
       }
       default:
@@ -150,7 +151,6 @@ function selectItem(node) {
   if (node) {
     inputElem.value = node.innerText;
     hideResults();
-    cargarmunicipios();
   }
 }
 
@@ -171,11 +171,78 @@ init();
 
 //Variables para municipios
 let filteredMunicipio = [];
-
+indexmcpio = 0;
+let inputmunicipio = document.getElementById('municipios');
+inputmunicipio.addEventListener('input', () => {
+  cargarmunicipios();
+});
 function cargarmunicipios() {
   let dpto = inputElem.value;
-  for (const municipios of countries[0].ciudades){
-      console.log(municipios);    
-  }
-  console.log(filteredMunicipio);
+  let municipio = countries.filter((dptos) => dptos.departamento == dpto);
+  autocompletemcpio(municipio);
 };
+
+// Autocompletado de municipios
+function autocompletemcpio(municipio) {
+  let valor = inputmunicipio.value;
+  if (!valor) {
+    hideResults();
+    inputmunicipio.value = "";
+    return;
+  }
+  filteredMunicipio = municipio.filter((municipios) => {
+    return municipios.municipio.toLowerCase().startsWith(valor.toLowerCase());
+  });
+  console.log(filteredMunicipio);
+}
+
+// Inicializar el index
+function selectFirstResultmcpio(){
+  
+}
+function handleresultkeymcpio(event) {
+  const { key } = event;
+  const activeItem = this.getItemAt(indexmcpio);
+  if (activeItem) {
+    activeItem.classList.remove("selected");
+    activeItem.setAttribute("aria-selected", "false");
+  }
+  if (filteredMunicipio.length != 0) {
+    switch (key) {
+      case "ArrowRight":
+        return;
+      case "ArrowLeft":
+        return;
+      case "Backspace":
+        return;
+      case "Backspace":
+        return;
+      case "Escape":
+        hideResults();
+        inputElem.value = "";
+        return;
+      case "ArrowUp": {
+        if (activeIndex === 0) {
+          activeIndex = filteredResults.length - 1;
+        }
+        activeIndex--;
+        break;
+      }
+      case "ArrowDown": {
+        if (activeIndex === filteredResults.length - 1) {
+          activeIndex = 0;
+        }
+        activeIndex++;
+        break;
+      }
+      case "Enter": {
+        inputElem.value = document.activeElement.value;
+        hideResults();
+        break;
+      }
+      default:
+        selectFirstResultmcpio();
+    }
+    selectResult();
+  }
+}
