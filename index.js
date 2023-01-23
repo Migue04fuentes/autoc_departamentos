@@ -10,6 +10,14 @@ var activeIndex = 0;
 var filteredResults = [];
 
 
+/* --MUNICIPIOS-- */
+var municipio;
+//Variables para municipios
+var filteredMunicipio = [];
+var indexmcpio = 0;
+var inputmunicipio = null;
+var resultsMcpio = null;
+
 function init() {
   fetch(
     "https://gist.githubusercontent.com/Migue04fuentes/0e9ec5b98468e55c64e814314a8dd5ba/raw/cb40e0681936f31a1a09f8a9fd6dc94fd1190281/Alldepartamentos"
@@ -20,6 +28,10 @@ function init() {
   resultsElem = document.getElementById("listdepartamentos");
   inputElem = document.getElementById("departamentos");
 
+
+  resultsMcpio = document.getElementById("listmunicipios");
+  inputmunicipio = document.getElementById('municipios');
+
   //Ejecutar evento en el input
   inputElem.addEventListener("input", (event) => {
     autocomplete(event);
@@ -27,6 +39,19 @@ function init() {
   // Recorrer la list con el teclado
   inputElem.addEventListener("keyup", (event) => {
     handleResultKeyDown(event);
+  });
+
+
+  inputmunicipio.addEventListener('focus', () => {
+    cargarmunicipios();
+  });
+
+  inputmunicipio.addEventListener('input', (event) => {
+    autocompletemcpio(event);
+  });
+
+  inputmunicipio.addEventListener("keyup", (event) => {
+    handleresultkeymcpio(event);
   });
 }
 
@@ -117,13 +142,6 @@ function selectResult() {
   } catch (error) { }
 }
 
-// Función al seleccionar un item de la lista
-function selectItem(node) {
-  if (node) {
-    inputElem.value = node.innerText;
-    hideResults();
-  }
-}
 
 // Ocultar y eliminar lista
 function hideResults() {
@@ -137,30 +155,20 @@ function getItemAt(index) {
   return this.resultsElem.querySelector(`#autocomplete-result-${index}`);
 }
 
-init();
-
 
 /* --MUNICIPIOS-- */
 
-//Variables para municipios
-let filteredMunicipio = [];
-indexmcpio = 0;
-let resultsMcpio = document.getElementById("listmunicipios");
-let inputmunicipio = document.getElementById('municipios');
-inputmunicipio.addEventListener('input', () => {
-  cargarmunicipios();
-});
 
 // Cargar los municipios del departamento seleccinado
 function cargarmunicipios() {
   let dpto = inputElem.value;
-  let municipio = countries.filter((dptos) => dptos.departamento == dpto);
-  autocompletemcpio(municipio);
+  municipio = countries.filter((dptos) => dptos.departamento == dpto);
+  console.log(municipio);
 };
 
 // Autocompletado de municipios
-function autocompletemcpio(municipio) {
-  let valor = inputmunicipio.value;
+function autocompletemcpio(event) {
+  const valor = inputmunicipio.value;
   if (!valor) {
     hideResultsMcpio();
     inputmunicipio.value = "";
@@ -172,13 +180,11 @@ function autocompletemcpio(municipio) {
 }
 
 
-inputmunicipio.addEventListener("keyup", (event) => {
-  handleresultkeymcpio(event);
-});
+
 
 function handleresultkeymcpio(event) {
   const { key } = event;
-  const activeItemcpio = this.getItemAt(indexmcpio);
+  const activeItemcpio = this.getItemAtm(indexmcpio);
   if (activeItemcpio) {
     activeItemcpio.classList.remove("selected");
     activeItemcpio.setAttribute("aria-selected", "false");
@@ -237,19 +243,26 @@ function hideResultsMcpio(){
 // Selección del elemento de la lista
 function selectResultMcpio() {
   try {
-    const value = inputmunicipio.value;
-    const autocompleteValue = filteredResults[indexmcpio].municipio;
-    const activeItemcpio = this.getItemAt(indexmcpio);
+    const valor = inputmunicipio.value;
+    const autocompleteValor = filteredMunicipio[indexmcpio].municipio;
+    const activeItemcpio = this.getItemAtm(indexmcpio);
+    
     if (activeItemcpio) {
       activeItemcpio.classList.add("selected");
       activeItemcpio.setAttribute("aria-selected", "true");
     }
-    if (!value || !autocompleteValue) {
+    if (!valor || !autocompleteValor) {
       return;
     }
-    if (value !== autocompleteValue) {
-      inputmunicipio.value = autocompleteValue;
-      inputmunicipio.setSelectionRange(value.length, autocompleteValue.length);
+    if (valor !== autocompleteValor) {
+      inputmunicipio.value = autocompleteValor;
+      inputmunicipio.setSelectionRange(valor.length, autocompleteValor.length);
     }
   } catch (error) { }
 }
+
+function getItemAtm(index){
+  return this.resultsMcpio.querySelector(`#autocomplete-result-${index}`);
+}
+
+init();
