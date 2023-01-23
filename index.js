@@ -20,10 +20,6 @@ function init() {
   resultsElem = document.getElementById("listdepartamentos");
   inputElem = document.getElementById("departamentos");
 
-  //Al hacer click en alguno de los elementos de la lista
-  // resultsElem.addEventListener("click", (event) => {
-  //   handleResultClick(event);
-  // });
   //Ejecutar evento en el input
   inputElem.addEventListener("input", (event) => {
     autocomplete(event);
@@ -47,31 +43,8 @@ function autocomplete(event) {
     return country.departamento.toLowerCase().startsWith(value.toLowerCase());
   });
 
-
-  // resultsElem.innerHTML = result
-  //   .map((result, index) => {
-  //     const isSelected = index ===0;
-  //     return `
-  //       <li
-  //         id='autocomplete-result-${index}'
-  //         class='autocomplete-result${isSelected ? " selected" : ""}'
-  //         role='option'
-  //         ${isSelected ? "aria-selected='true'" : ""}
-  //       >
-  //         ${result.departamento}
-  //       </li>
-  //     `;
-  //   })
-  //   .join("");
-  // resultsElem.classList.remove("hidden");
 }
 
-// Al seleccionar item de la lista
-/* function handleResultClick(event) {
-  if (event.target && event.target.nodeName === "LI") {
-    selectItem(event.target);
-  }
-} */
 
 // Desplazamiento por la lista
 function handleResultKeyDown(event) {
@@ -86,8 +59,6 @@ function handleResultKeyDown(event) {
       case "ArrowRight":
         return;
       case "ArrowLeft":
-        return;
-      case "Backspace":
         return;
       case "Backspace":
         return;
@@ -169,13 +140,18 @@ function getItemAt(index) {
 init();
 
 
+/* --MUNICIPIOS-- */
+
 //Variables para municipios
 let filteredMunicipio = [];
 indexmcpio = 0;
+let resultsMcpio = document.getElementById("listmunicipios");
 let inputmunicipio = document.getElementById('municipios');
 inputmunicipio.addEventListener('input', () => {
   cargarmunicipios();
 });
+
+// Cargar los municipios del departamento seleccinado
 function cargarmunicipios() {
   let dpto = inputElem.value;
   let municipio = countries.filter((dptos) => dptos.departamento == dpto);
@@ -186,26 +162,26 @@ function cargarmunicipios() {
 function autocompletemcpio(municipio) {
   let valor = inputmunicipio.value;
   if (!valor) {
-    hideResults();
+    hideResultsMcpio();
     inputmunicipio.value = "";
     return;
   }
   filteredMunicipio = municipio.filter((municipios) => {
     return municipios.municipio.toLowerCase().startsWith(valor.toLowerCase());
   });
-  console.log(filteredMunicipio);
 }
 
-// Inicializar el index
-function selectFirstResultmcpio(){
-  
-}
+
+inputmunicipio.addEventListener("keyup", (event) => {
+  handleresultkeymcpio(event);
+});
+
 function handleresultkeymcpio(event) {
   const { key } = event;
-  const activeItem = this.getItemAt(indexmcpio);
-  if (activeItem) {
-    activeItem.classList.remove("selected");
-    activeItem.setAttribute("aria-selected", "false");
+  const activeItemcpio = this.getItemAt(indexmcpio);
+  if (activeItemcpio) {
+    activeItemcpio.classList.remove("selected");
+    activeItemcpio.setAttribute("aria-selected", "false");
   }
   if (filteredMunicipio.length != 0) {
     switch (key) {
@@ -218,31 +194,62 @@ function handleresultkeymcpio(event) {
       case "Backspace":
         return;
       case "Escape":
-        hideResults();
-        inputElem.value = "";
+        hideResultsMcpio();
+        inputmunicipio.value = "";
         return;
       case "ArrowUp": {
-        if (activeIndex === 0) {
-          activeIndex = filteredResults.length - 1;
+        if (indexmcpio === 0) {
+          indexmcpio = filteredMunicipio.length - 1;
         }
-        activeIndex--;
+        indexmcpio--;
         break;
       }
       case "ArrowDown": {
-        if (activeIndex === filteredResults.length - 1) {
-          activeIndex = 0;
+        if (indexmcpio === filteredMunicipio.length - 1) {
+          indexmcpio = 0;
         }
-        activeIndex++;
+        indexmcpio++;
         break;
       }
       case "Enter": {
-        inputElem.value = document.activeElement.value;
-        hideResults();
+        inputmunicipio.value = document.activeElement.value;
+        hideResultsMcpio();
         break;
       }
       default:
         selectFirstResultmcpio();
     }
-    selectResult();
+    selectResultMcpio();
   }
+}
+// Ocultar y eliminar lista
+function hideResultsMcpio(){
+  this.resultsMcpio.innerHTML = "";
+  this.resultsMcpio.classList.add('hidden');
+  filteredMunicipio = [];
+}
+
+  // Inicializar el index
+  function selectFirstResultmcpio(){
+    indexmcpio = 0;
+  }
+
+// Selección del elemento de la lista
+function selectResultMcpio() {
+  try {
+    const value = inputmunicipio.value;
+    const autocompleteValue = filteredResults[indexmcpio].municipio;
+    const activeItemcpio = this.getItemAt(indexmcpio);
+    if (activeItemcpio) {
+      activeItemcpio.classList.add("selected");
+      activeItemcpio.setAttribute("aria-selected", "true");
+    }
+    if (!value || !autocompleteValue) {
+      return;
+    }
+    if (value !== autocompleteValue) {
+      inputmunicipio.value = autocompleteValue;
+      inputmunicipio.setSelectionRange(value.length, autocompleteValue.length);
+    }
+  } catch (error) { }
 }
